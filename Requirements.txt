@@ -1,0 +1,9 @@
+Flask
+pandas
+numpy
+scikit-learn
+joblib
+tldextract
+language-tool-python
+pytesseract
+Pillow

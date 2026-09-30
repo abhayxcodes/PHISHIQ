@@ -7,4 +7,5 @@ tldextract
 language-tool-python
 pytesseract
 Pillow
-Gunicorn
+gunicorn
+language-tool-python

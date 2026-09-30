@@ -6,4 +6,4 @@ joblib
 tldextract
 language-tool-python
 pytesseract
-Pillow .
+Pillow 

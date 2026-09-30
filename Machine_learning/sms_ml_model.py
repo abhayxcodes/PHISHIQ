@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
 
 # ================= LOAD DATA =================
-df = pd.read_csv(r"C:\project_phish2\project phish\project_phish\abhay_csv\Dataset_10191.csv")
+df = pd.read_csv(r"C:\PHISHIQ\project_phishiq\abhay_csv\Dataset_10191.csv")
 
 # sirf required columns
 df = df[['LABEL', 'TEXT']]
@@ -70,8 +70,8 @@ print("\nClassification Report:\n")
 print(classification_report(y_test, y_pred))
 
 # ================= SAVE =================
-joblib.dump(model, "phishing_model.pkl")
-joblib.dump(vectorizer, "vectorizer.pkl")
+joblib.dump(model, "sms_rf_model.pkl")
+joblib.dump(vectorizer, "sms_vectorizer.pkl")
 
 print("\n Model & Vectorizer Saved Successfully")
 

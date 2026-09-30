@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, accuracy_score
 from Features import extract_features
 
 # Load dataset
-df = pd.read_csv(r"C:\project_phish2\project phish\project_phish\abhay_csv\PhiUSIIL_Phishing_URL_Dataset.csv")
+df = pd.read_csv(r"C:\PHISHIQ\project_phishiq\abhay_csv\PhiUSIIL_Phishing_URL_Dataset.csv")
 
 
 

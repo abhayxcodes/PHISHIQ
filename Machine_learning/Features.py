@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 # -----------------------------
 LEGIT_DOMAINS = {
     "google.com",
-    "https://www.github.com",
+    "github.com",
     "amazon.in",
     "microsoft.com",
     "facebook.com",
@@ -126,12 +126,29 @@ def extract_features(url):
         # -----------------------------
 
         risky_keywords = [
-            'verify-account',
-            'secure-login',
-            'bank-update',
-            'free-gift',
-            'confirm-password'
-        ]
+    'login',
+    'signin',
+    'verify',
+    'verification',
+    'account',
+    'secure',
+    'security',
+    'update',
+    'confirm',
+    'password',
+    'credential',
+    'wallet',
+    'payment',
+    'billing',
+    'invoice',
+    'recover',
+    'reset',
+    'authenticate',
+    'bonus',
+    'gift',
+    'prize',
+    'free'
+]
 
         features.append(
             sum(word in url.lower() for word in risky_keywords)

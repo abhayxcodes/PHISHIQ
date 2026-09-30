@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 # ================= LOAD DATA =================
 
-df = pd.read_csv(r"C:\project_phish2\project phish\project_phish\abhay_csv\CEAS_08.csv")
+df = pd.read_csv(r"C:\PHISHIQ\project_phishiq\abhay_csv\CEAS_08.csv")
 
 # ================= FEATURE ENGINEERING =================
 

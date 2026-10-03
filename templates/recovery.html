@@ -1,401 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>PhishIQ — Recovery</title>
-
-  <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
-
-    body{
-      background:#02071e;
-      color:#cfefff;
-      font-family:'Courier New',monospace;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
-
-    /* ================= GRID BACKGROUND ================= */
-
-    .grid-bg{
-      position:fixed;
-      inset:0;
-
-      background-image:
-      linear-gradient(rgba(0,255,255,.08) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(0,255,255,.08) 1px,transparent 1px);
-
-      background-size:40px 40px;
-      pointer-events:none;
-
-      animation:moveGrid 24s linear infinite;
-    }
-
-    @keyframes moveGrid{
-
-      0%{
-        background-position:0 0;
-      }
-
-      100%{
-        background-position:40px 40px;
-      }
-    }
-
-    /* ================= NAVBAR ================= */
-
-    nav{
-      display:flex;
-      gap:1.5rem;
-      padding:1rem 2rem;
-      border-bottom:1px solid rgba(0,255,255,.15);
-      align-items:center;
-      position:relative;
-      z-index:1;
-    }
-
-    .brand{
-      color:#00ffff;
-      font-weight:700;
-      font-size:1rem;
-      letter-spacing:.1em;
-      margin-right:auto;
-      text-shadow:0 0 10px rgba(0,255,255,.4);
-    }
-
-    nav a{
-      color:#8bdcff;
-      text-decoration:none;
-      font-size:.8rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      transition:.2s;
-      text-shadow:0 0 5px rgba(0,255,255,.15);
-    }
-
-    nav a:hover,
-    nav a.active{
-      color:#00ffff;
-      text-shadow:0 0 10px rgba(0,255,255,.4);
-    }
-
-    /* ================= MAIN ================= */
-
-    main{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:2rem;
-      position:relative;
-      z-index:1;
-    }
-
-    h1{
-      font-size:1.6rem;
-      font-weight:600;
-      color:#e3faff;
-      margin-bottom:.3rem;
-      text-align:center;
-      text-shadow:0 0 12px rgba(0,255,255,.3);
-    }
-
-    .sub{
-      font-size:.85rem;
-      color:#7df1ff;
-      margin-bottom:2rem;
-      letter-spacing:.08em;
-      text-align:center;
-      text-shadow:0 0 8px rgba(0,255,255,.25);
-    }
-
-    /* ================= TYPES ================= */
-
-    .types{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:.75rem;
-      width:100%;
-      max-width:520px;
-      margin-bottom:1.5rem;
-    }
-
-    .type-btn{
-      background:#071a2e;
-      border:2px solid rgba(0,255,255,.25);
-      border-radius:10px;
-      padding:1rem;
-      text-align:center;
-      cursor:pointer;
-      transition:.2s;
-      font-size:.85rem;
-      color:#cfefff;
-      letter-spacing:.08em;
-      text-shadow:0 0 5px rgba(0,255,255,.15);
-    }
-
-    .type-btn:hover{
-      border-color:#00d7ff;
-      color:#00d7ff;
-      text-shadow:0 0 10px rgba(0,255,255,.3);
-    }
-
-    .type-btn.selected{
-      border-color:#00d7ff;
-      color:#00d7ff;
-      background:#00172f;
-    }
-
-    /* ================= STEPS CARD ================= */
-
-    .steps-card{
-      background:#071a2e;
-      border:2px solid rgba(0,255,255,.35);
-      border-radius:12px;
-      padding:1.5rem;
-      width:100%;
-      max-width:520px;
-      box-shadow:0 0 15px rgba(0,255,255,.2);
-    }
-
-    .step{
-      display:flex;
-      align-items:flex-start;
-      gap:.8rem;
-      margin-bottom:1rem;
-    }
-
-    .step:last-child{
-      margin-bottom:0;
-    }
-
-    .step-num{
-      background:#00ffff;
-      color:#020719;
-      font-size:.75rem;
-      font-weight:700;
-      width:22px;
-      height:22px;
-      border-radius:50%;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      flex-shrink:0;
-      margin-top:1px;
-
-      text-shadow:none;
-    }
-
-    .step-text{
-      font-size:.88rem;
-      color:#cfefff;
-      line-height:1.5;
-      text-shadow:0 0 5px rgba(0,255,255,.15);
-    }
-
-    /* ================= HELPLINE ================= */
-
-    .helpline{
-      margin-top:1rem;
-      padding:.75rem 1rem;
-      background:#00172f;
-      border:2px solid rgba(0,255,255,.35);
-      border-radius:8px;
-      font-size:.82rem;
-      color:#7df1ff;
-      text-align:center;
-      letter-spacing:.05em;
-      text-shadow:0 0 5px rgba(0,255,255,.2);
-    }
-
-    /* ================= EMPTY ================= */
-
-    .empty{
-      color:#8bdcff;
-      font-size:.85rem;
-      text-align:center;
-      padding:1rem;
-      text-shadow:0 0 5px rgba(0,255,255,.15);
-    }
-
-    /* ================= FORM ================= */
-
-    form{
-      display:none;
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISHIQ — Recovery</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#02071e;color:#cfefff;font-family:'Courier New',monospace;min-height:100vh;display:flex;flex-direction:column}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,.08) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;animation:moveGrid 24s linear infinite}
+@keyframes moveGrid{0%{background-position:0 0}100%{background-position:40px 40px}}
+nav{display:flex;gap:1.5rem;padding:1rem 2rem;border-bottom:1px solid rgba(0,255,255,.15);align-items:center;position:relative;z-index:1}
+nav a{color:#8bdcff;text-decoration:none;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;transition:.2s;text-shadow:0 0 5px rgba(0,255,255,.15)}
+nav a:hover,nav a.active{color:#00ffff;text-shadow:0 0 10px rgba(0,255,255,.4)}
+.brand{color:#00ffff;font-weight:700;font-size:1rem;letter-spacing:.1em;margin-right:auto;text-shadow:0 0 10px rgba(0,255,255,.4)}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:1}
+h1{font-size:1.6rem;font-weight:600;color:#e3faff;margin-bottom:.3rem;text-align:center;text-shadow:0 0 12px rgba(0,255,255,.3)}
+.sub{font-size:.85rem;color:#7df1ff;margin-bottom:2rem;letter-spacing:.08em;text-align:center;text-shadow:0 0 8px rgba(0,255,255,.25)}
+.types{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;width:100%;max-width:520px;margin-bottom:1.5rem}
+.type-btn{background:#071a2e;border:2px solid rgba(0,255,255,.25);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:.2s;font-size:.85rem;color:#cfefff;letter-spacing:.08em;text-shadow:0 0 5px rgba(0,255,255,.15)}
+.type-btn:hover{border-color:#00d7ff;color:#00d7ff;text-shadow:0 0 10px rgba(0,255,255,.3)}
+.type-btn.selected{border-color:#00d7ff;color:#00d7ff;background:#00172f}
+.steps-card{background:#071a2e;border:2px solid rgba(0,255,255,.35);border-radius:12px;padding:1.5rem;width:100%;max-width:520px;box-shadow:0 0 15px rgba(0,255,255,.2)}
+.step{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:1rem}
+.step:last-child{margin-bottom:0}
+.step-num{background:#00ffff;color:#020719;font-size:.75rem;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;text-shadow:none}
+.step-text{font-size:.88rem;color:#cfefff;line-height:1.5;text-shadow:0 0 5px rgba(0,255,255,.15)}
+.helpline{margin-top:1rem;padding:.75rem 1rem;background:#00172f;border:2px solid rgba(0,255,255,.35);border-radius:8px;font-size:.82rem;color:#7df1ff;text-align:center;letter-spacing:.05em;text-shadow:0 0 5px rgba(0,255,255,.2)}
+.empty{color:#8bdcff;font-size:.85rem;text-align:center;padding:1rem;text-shadow:0 0 5px rgba(0,255,255,.15)}
+form{display:none}
+</style>
 </head>
-
 <body>
-
-  <!-- ================= GRID ================= -->
-
-  <div class="grid-bg"></div>
-
-  <!-- ================= NAVBAR ================= -->
-
-  <nav>
-
-    <span class="brand">PHISHIQ</span>
-
-    <a href="{{ url_for('home') }}">Home</a>
-
-    <a href="{{ url_for('form') }}">URL</a>
-
-    <a href="{{ url_for('email_check') }}">Email</a>
-
-    <a href="{{ url_for('sms_check') }}">SMS</a>
-
-    <a href="{{ url_for('recovery') }}" class="active">
-      Recovery
-    </a>
-
-  </nav>
-
-  <!-- ================= MAIN ================= -->
-
-  <main>
-
-    <!-- TITLE -->
-
-    <h1>
-      Incident Recovery
-    </h1>
-
-    <p class="sub">
-      Select what was compromised — get immediate action steps
-    </p>
-
-    <!-- TYPES -->
-
-    <div class="types">
-
-      <div class="type-btn {% if recovery_type=='password' %}selected{% endif %}"
-        onclick="submit_type('password')">
-
-        🔑 Password Stolen
-
+<div class="grid-bg"></div>
+<nav>
+  <span class="brand">PHISHIQ</span>
+  <a href="{{ url_for('home') }}">Home</a>
+  <a href="{{ url_for('form') }}">URL</a>
+  <a href="{{ url_for('email_check') }}">Email</a>
+  <a href="{{ url_for('sms_check') }}">SMS</a>
+  <a href="{{ url_for('recovery') }}" class="active">Recovery</a>
+</nav>
+<main>
+  <h1>Incident Recovery</h1>
+  <p class="sub">Select what was compromised — get immediate action steps</p>
+  <div class="types">
+    <div class="type-btn {% if recovery_type=='password' %}selected{% endif %}" onclick="submit_type('password')">🔑 Password Stolen</div>
+    <div class="type-btn {% if recovery_type=='bank' %}selected{% endif %}" onclick="submit_type('bank')">🏦 Bank Details</div>
+    <div class="type-btn {% if recovery_type=='otp' %}selected{% endif %}" onclick="submit_type('otp')">📱 OTP Shared</div>
+    <div class="type-btn {% if recovery_type=='device' %}selected{% endif %}" onclick="submit_type('device')">💻 Device Hacked</div>
+  </div>
+  <div class="steps-card">
+    {% if steps %}
+      {% for step in steps %}
+      <div class="step">
+        <div class="step-num">{{ loop.index }}</div>
+        <div class="step-text">{{ step }}</div>
       </div>
-
-      <div class="type-btn {% if recovery_type=='bank' %}selected{% endif %}"
-        onclick="submit_type('bank')">
-
-        🏦 Bank Details
-
-      </div>
-
-      <div class="type-btn {% if recovery_type=='otp' %}selected{% endif %}"
-        onclick="submit_type('otp')">
-
-        📱 OTP Shared
-
-      </div>
-
-      <div class="type-btn {% if recovery_type=='device' %}selected{% endif %}"
-        onclick="submit_type('device')">
-
-        💻 Device Hacked
-
-      </div>
-
-    </div>
-
-    <!-- STEPS CARD -->
-
-    <div class="steps-card">
-
-      {% if steps %}
-
-        {% for step in steps %}
-
-        <div class="step">
-
-          <div class="step-num">
-            {{ loop.index }}
-          </div>
-
-          <div class="step-text">
-            {{ step }}
-          </div>
-
-        </div>
-
-        {% endfor %}
-
-        {% if recovery_type == 'bank' %}
-
-        <div class="helpline">
-          🚨 Cyber Crime Helpline: 1930 — Call immediately
-        </div>
-
-        {% endif %}
-
-      {% else %}
-
-        <div class="empty">
-          Select an incident type above to see recovery steps
-        </div>
-
+      {% endfor %}
+      {% if recovery_type == 'bank' %}
+      <div class="helpline">🚨 Cyber Crime Helpline: 1930 — Call immediately</div>
       {% endif %}
+    {% else %}
+      <div class="empty">Select an incident type above to see recovery steps</div>
+    {% endif %}
+  </div>
+  <form method="POST" id="rform" action="{{ url_for('recovery') }}">
+    <input type="hidden" name="type" id="rtype">
+  </form>
 
-    </div>
-
-    <!-- FORM -->
-
-    <form method="POST"
-      id="rform"
-      action="{{ url_for('recovery') }}">
-
-      <input type="hidden"
-        name="type"
-        id="rtype">
-
-    </form>
-
-    <!-- CYBER CRIME PORTAL -->
-
-    <div class="helpline" style="margin-top:1.2rem">
-
-      <a href="https://cybercrime.gov.in"
-        target="_blank"
-        style="color:#00ffff;text-decoration:none">
-
-        🔒 Report to Cybercrime Portal
-
-      </a>
-
-    </div>
-
-  </main>
-
-  <!-- ================= SCRIPT ================= -->
-
-  <script>
-
-    function submit_type(t){
-
-      document.getElementById('rtype').value = t;
-
-      document.getElementById('rform').submit();
-    }
-
-  </script>
-
+  <div class="helpline" style="margin-top:1.2rem">
+  <a href="https://cybercrime.gov.in" target="_blank" rel="noopener"
+     style="color:#00ffff;text-decoration:none">🔒 Report to Cybercrime Portal</a>
+</div>
+</main>
+<script>
+function submit_type(t){document.getElementById('rtype').value=t;document.getElementById('rform').submit()}
+</script>
 </body>
-
 </html>
+

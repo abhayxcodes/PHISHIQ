@@ -13,4 +13,3 @@ pytest>=8,<9
 
 # Optional: requires a Java runtime and downloads LanguageTool data.
 language-tool-python>=2.9,<3
-gunicorn

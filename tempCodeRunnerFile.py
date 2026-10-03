@@ -9,9 +9,10 @@ import pytesseract
 from flask import Flask, render_template, request
 from PIL import Image, UnidentifiedImageError
 
-from models.utils.Features import analyze_url, extract_features
-from models.utils.scoring import apply_overrides, combine, make_reasons, risk_label
-from models.utils.text_rules import email_rules, extract_urls, sms_rules
+from utils.Features import analyze_url, extract_features
+from utils.scoring import apply_overrides, combine, make_reasons, risk_label, score_from_points
+from utils.text_rules import email_rules, extract_urls, sms_rules
+
 BASE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = BASE_DIR / "models"
 

@@ -1,6 +1,10 @@
 __pycache__/
-*.pyc
-venv/
+*.py[cod]
 .venv/
+venv/
 .env
-.vscode/
+.pytest_cache/
+models/*.pkl
+models/*.npy
+models/*.json
+datasets/*.csv

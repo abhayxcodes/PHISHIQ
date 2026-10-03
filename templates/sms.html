@@ -1,425 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PhishIQ — SMS Check</title>
-  <style>
-
-    /* ── Reset ─────────────────────────────────────────── */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #02071e;
-      color: #cfefff;
-      font-family: 'Courier New', monospace;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    /* ── Background : grid ──────────────────────────────── */
-    .grid-bg {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,255,255,.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,255,.06) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      animation: moveGrid 24s linear infinite;
-      z-index: 0;
-    }
-    @keyframes moveGrid {
-      0%   { background-position: 0 0; }
-      100% { background-position: 40px 40px; }
-    }
-
-    /* ── Background : glow orbs ─────────────────────────── */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      pointer-events: none;
-      filter: blur(90px);
-      z-index: 0;
-    }
-    .orb1 {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(0,255,200,.09) 0%, transparent 70%);
-      bottom: -100px; right: -80px;
-      animation: o1 20s ease-in-out infinite;
-    }
-    .orb2 {
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(0,100,255,.09) 0%, transparent 70%);
-      top: -80px; left: -80px;
-      animation: o2 26s ease-in-out infinite;
-    }
-    @keyframes o1 { 0%,100% { transform: translate(0,0); }  50% { transform: translate(-45px,-30px); } }
-    @keyframes o2 { 0%,100% { transform: translate(0,0); }  50% { transform: translate(40px,25px); } }
-
-    /* ── Background : scanlines ─────────────────────────── */
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent, transparent 2px,
-        rgba(0,0,0,.07) 2px, rgba(0,0,0,.07) 4px
-      );
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Navigation ─────────────────────────────────────── */
-    nav {
-      display: flex;
-      gap: 1.5rem;
-      padding: .75rem 2rem;
-      border-bottom: 1px solid rgba(0,255,255,.15);
-      align-items: center;
-      position: relative;
-      z-index: 1;
-      background: rgba(0,10,20,.6);
-      backdrop-filter: blur(6px);
-    }
-    .brand {
-      color: #00ffff;
-      font-weight: 700;
-      font-size: .95rem;
-      letter-spacing: .1em;
-      margin-right: auto;
-      text-shadow: 0 0 10px rgba(0,255,255,.5);
-    }
-    nav a {
-      color: #8bdcff;
-      text-decoration: none;
-      font-size: .75rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      transition: .2s;
-    }
-    nav a:hover,
-    nav a.active {
-      color: #00ffff;
-      text-shadow: 0 0 10px rgba(0,255,255,.5);
-    }
-
-    /* ── Main wrapper ───────────────────────────────────── */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      position: relative;
-      z-index: 1;
-      gap: .9rem;
-    }
-    h1   { font-size: 1.4rem; font-weight: 700; color: #e3faff; text-shadow: 0 0 12px rgba(0,255,255,.35); }
-    .sub { font-size: .78rem; color: #7df1ff; letter-spacing: .08em; }
-
-    /* ── 3-column layout ────────────────────────────────── */
-    .three-col {
-      display: flex;
-      align-items: stretch;
-      gap: 1rem;
-      width: 100%;
-      max-width: 1160px;
-      justify-content: center;
-    }
-    @media (max-width: 880px) {
-      .three-col { flex-direction: column; align-items: center; }
-    }
-
-    /* ── Center input card ──────────────────────────────── */
-    .card {
-      background: rgba(7,26,46,.9);
-      border: 2px solid rgba(0,255,255,.38);
-      border-radius: 12px;
-      padding: 1.5rem;
-      width: 100%;
-      max-width: 390px;
-      box-shadow: 0 0 18px rgba(0,255,255,.2);
-      backdrop-filter: blur(8px);
-      flex-shrink: 0;
-    }
-    textarea {
-      width: 100%;
-      background: #041225;
-      border: 2px solid rgba(0,255,255,.25);
-      border-radius: 7px;
-      color: #cfefff;
-      padding: .65rem .9rem;
-      font-size: .82rem;
-      outline: none;
-      resize: vertical;
-      min-height: 85px;
-      margin-bottom: .75rem;
-      font-family: inherit;
-      transition: .2s;
-    }
-    textarea:focus {
-      border-color: #00d7ff;
-      box-shadow: 0 0 10px rgba(0,215,255,.25);
-    }
-    .file-label {
-      display: block;
-      border: 2px dashed rgba(0,255,255,.3);
-      border-radius: 7px;
-      padding: .55rem .9rem;
-      font-size: .75rem;
-      color: #8bdcff;
-      cursor: pointer;
-      text-align: center;
-      margin-bottom: .75rem;
-      transition: .2s;
-    }
-    .file-label:hover { border-color: #00ffff; color: #00ffff; }
-    input[type=file]  { display: none; }
-    button {
-      width: 100%;
-      background: #00ffff;
-      border: none;
-      color: #020719;
-      padding: .7rem;
-      border-radius: 7px;
-      font-size: .85rem;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      transition: .2s;
-      box-shadow: 0 0 14px rgba(0,255,255,.3);
-    }
-    button:hover { background: #00d7ff; }
-
-    /* ── Result box ─────────────────────────────────────── */
-    .result-box {
-      margin-top: .9rem;
-      background: #071a2e;
-      border-radius: 7px;
-      padding: .8rem;
-      border: 2px solid rgba(0,255,255,.3);
-      text-align: center;
-    }
-    .result-text { font-size: 1rem; font-weight: 600; margin-bottom: .2rem; }
-    .risk-pct    { font-size: .78rem; color: #8bdcff; }
-    .high { color: #ff3c00; }
-    .med  { color: #ffaa00; }
-    .low  { color: #00ff88; }
-
-    /* ── Tips grid ──────────────────────────────────────── */
-    .tips {
-      margin-top: .9rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .55rem;
-    }
-    .tip {
-      background: #041225;
-      border-left: 3px solid #00ffff;
-      border-radius: 0 6px 6px 0;
-      padding: .45rem .65rem;
-      font-size: .7rem;
-      color: #b8efff;
-      line-height: 1.35;
-    }
-    .tip b { color: #fff; display: block; margin-bottom: .1rem; font-size: .72rem; }
-
-    /* ── Side panels — green tone ───────────────────────── */
-    .side-panel {
-      background: rgba(5,15,35,.9);
-      border: 2px solid rgba(0,255,136,.22);
-      border-radius: 12px;
-      padding: 1.1rem;
-      width: 100%;
-      max-width: 270px;
-      box-shadow: 0 0 14px rgba(0,255,136,.07);
-      backdrop-filter: blur(8px);
-      display: flex;
-      flex-direction: column;
-      gap: .45rem;
-      flex-shrink: 0;
-    }
-    .panel-title {
-      font-size: .72rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: #00e87a;
-      text-shadow: 0 0 8px rgba(0,255,136,.45);
-      display: flex;
-      align-items: center;
-      gap: .45rem;
-      margin-bottom: .2rem;
-    }
-
-    /* ── Live blink dot ─────────────────────────────────── */
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #00e87a;
-      box-shadow: 0 0 5px #00e87a;
-      animation: blink 1.2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
-
-    /* ── Trend items — SMS chat-bubble style ────────────── */
-    .t-item {
-      background: rgba(0,255,136,.04);
-      border: 1px solid rgba(0,255,136,.13);
-      border-radius: 8px 8px 8px 2px;
-      padding: .45rem .65rem;
-      display: flex;
-      flex-direction: column;
-      gap: .2rem;
-      transition: .2s;
-    }
-    .t-item:hover {
-      background: rgba(0,255,136,.09);
-      border-color: rgba(0,255,136,.30);
-    }
-    .t-row   { display: flex; align-items: flex-start; gap: .45rem; }
-    .t-num   { font-size: .63rem; font-weight: 700; min-width: 15px; margin-top: .1rem; color: #00e87a; }
-    .t-body  { font-size: .68rem; color: #b8ffd8; line-height: 1.32; flex: 1; }
-    .t-sender{ font-size: .62rem; color: #3a6a5a; padding-left: 20px; }
-
-    /* ── Tags ───────────────────────────────────────────── */
-    .t-tag        { font-size: .58rem; padding: .1rem .38rem; border-radius: 3px; white-space: nowrap; align-self: flex-start; }
-    .tag-delivery { background: rgba(0,200,255,.12);  color: #00d7ff; border: 1px solid rgba(0,200,255,.30); }
-    .tag-kyc      { background: rgba(255,170,0,.15);  color: #ffaa00; border: 1px solid rgba(255,170,0,.30); }
-    .tag-prize    { background: rgba(0,255,136,.10);  color: #00ff88; border: 1px solid rgba(0,255,136,.25); }
-    .tag-bank     { background: rgba(255,60,0,.12);   color: #ff6a3d; border: 1px solid rgba(255,60,0,.30); }
-    .tag-job      { background: rgba(150,100,255,.15); color: #bb99ff; border: 1px solid rgba(150,100,255,.30); }
-
-    .panel-foot { font-size: .6rem; color: #3a5a6a; letter-spacing: .04em; margin-top: .25rem; }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHISHIQ — SMS Check</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#02071e;color:#cfefff;font-family:'Courier New',monospace;min-height:100vh;display:flex;flex-direction:column}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,.08) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;animation:moveGrid 24s linear infinite}
+@keyframes moveGrid{0%{background-position:0 0}100%{background-position:40px 40px}}
+nav{display:flex;gap:1.5rem;padding:1rem 2rem;border-bottom:1px solid rgba(0,255,255,.15);align-items:center;position:relative;z-index:1}
+nav a{color:#8bdcff;text-decoration:none;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;transition:.2s;text-shadow:0 0 5px rgba(0,255,255,.15)}
+nav a:hover,nav a.active{color:#00ffff;text-shadow:0 0 10px rgba(0,255,255,.4)}
+.brand{color:#00ffff;font-weight:700;font-size:1rem;letter-spacing:.1em;margin-right:auto;text-shadow:0 0 10px rgba(0,255,255,.4)}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:1}
+h1{font-size:1.6rem;font-weight:600;color:#e3faff;margin-bottom:.3rem;text-shadow:0 0 12px rgba(0,255,255,.3)}
+.sub{font-size:.85rem;color:#7df1ff;margin-bottom:2rem;letter-spacing:.08em;text-shadow:0 0 8px rgba(0,255,255,.25)}
+.card{background:#071a2e;border:2px solid rgba(0,255,255,.35);border-radius:12px;padding:2rem;width:100%;max-width:520px;box-shadow:0 0 15px rgba(0,255,255,.2)}
+textarea{width:100%;background:#041225;border:2px solid rgba(0,255,255,.25);border-radius:8px;color:#cfefff;padding:.75rem 1rem;font-size:.9rem;outline:none;resize:vertical;min-height:90px;margin-bottom:1rem;font-family:inherit;transition:.2s;text-shadow:0 0 5px rgba(0,255,255,.15)}
+textarea:focus{border-color:#00d7ff;box-shadow:0 0 10px rgba(0,215,255,.25)}
+.file-label{display:block;border:2px dashed rgba(0,255,255,.35);border-radius:8px;padding:.7rem 1rem;font-size:.82rem;color:#8bdcff;cursor:pointer;text-align:center;margin-bottom:1rem;transition:.2s;text-shadow:0 0 5px rgba(0,255,255,.15)}
+.file-label:hover{border-color:#00ffff;color:#00ffff;text-shadow:0 0 10px rgba(0,255,255,.3)}
+input[type=file]{display:none}
+button{width:100%;background:#00ffff;border:2px solid #00ffff;color:#020719;padding:.75rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:.2s;text-shadow:none;box-shadow:0 0 15px rgba(0,255,255,.25)}
+button:hover{background:#00d7ff;border-color:#00d7ff}
+.result-box{margin-top:1.2rem;background:#071a2e;border-radius:8px;padding:1rem;border:2px solid rgba(0,255,255,.35);text-align:center;box-shadow:0 0 10px rgba(0,255,255,.2)}
+.result-text{font-size:1.1rem;font-weight:600;margin-bottom:.3rem;color:#cfefff;text-shadow:0 0 10px rgba(0,255,255,.3)}
+.risk-pct{font-size:.85rem;color:#8bdcff;text-shadow:0 0 5px rgba(0,255,255,.2)}
+.high{color:#ff3c00;text-shadow:0 0 10px rgba(255,0,0,.3)}.med{color:#ffaa00;text-shadow:0 0 10px rgba(255,170,0,.3)}.low{color:#00ff88;text-shadow:0 0 10px rgba(0,255,136,.3)}
+.tips{margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.tip{background:#041225;border-left:4px solid #00ffff;border-radius:0 6px 6px 0;padding:.6rem .8rem;font-size:.78rem;color:#b8efff;line-height:1.4;text-shadow:0 0 5px rgba(0,255,255,.15)}
+.tip b{color:#ffffff;display:block;margin-bottom:.2rem;font-size:.8rem;text-shadow:0 0 8px rgba(0,255,255,.2)}
+</style>
 </head>
 <body>
-
-  <!-- Background layers -->
-  <div class="grid-bg"></div>
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="scanlines"></div>
-
-  <!-- Navigation -->
-  <nav>
-    <span class="brand">PHISHIQ</span>
-    <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('form') }}">URL</a>
-    <a href="{{ url_for('email_check') }}">Email</a>
-    <a href="{{ url_for('sms_check') }}" class="active">SMS</a>
-    <a href="{{ url_for('recovery') }}">Recovery</a>
-  </nav>
-
-  <!-- Page content -->
-  <main>
-    <h1>SMS Phishing Check</h1>
-    <p class="sub">Paste SMS text or upload a screenshot to scan</p>
-
-    <div class="three-col">
-
-      <!-- LEFT panel — items #1–3 -->
-      <div class="side-panel">
-        <div class="panel-title"><span class="dot"></span> Trending SMS</div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#1</span>
-            <span class="t-body">Your parcel couldn't be delivered. Update address: bit.ly/indpost-redeliver</span>
-          </div>
-          <div class="t-sender">From: INDPOST</div>
-          <span class="t-tag tag-delivery">Delivery</span>
-        </div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#2</span>
-            <span class="t-body">URGENT: KYC expires today. Complete or account blocked: sbi-kyc.xyz/update</span>
-          </div>
-          <div class="t-sender">From: SBI-ALERT</div>
-          <span class="t-tag tag-kyc">KYC</span>
-        </div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#3</span>
-            <span class="t-body">BSNL lucky draw winner ₹25,000. Claim: tinyurl.com/bsnl-prize26</span>
-          </div>
-          <div class="t-sender">From: BSNL-WIN</div>
-          <span class="t-tag tag-prize">Prize</span>
-        </div>
-
-        <div class="panel-foot">⚠ PhishSence Threat Intel</div>
-      </div>
-
-      <!-- CENTER — input card -->
-      <div class="card">
-        <form method="POST" action="{{ url_for('sms_check') }}" enctype="multipart/form-data">
-          <textarea name="sms" placeholder="Paste SMS content here...">{{ sms or '' }}</textarea>
-          <label class="file-label" for="screenshot">📎 Upload SMS screenshot (optional)</label>
-          <input type="file" id="screenshot" name="screenshot" accept="image/*">
-          <button type="submit">Analyse SMS</button>
-        </form>
-
-        {% if result %}
-        <div class="result-box">
-          <div class="result-text {% if 'High' in result %}high{% elif 'Medium' in result %}med{% else %}low{% endif %}">
-            {{ result }}
-          </div>
-          <div class="risk-pct">Risk Score: {{ risk_percentage }}%</div>
-        </div>
-        {% endif %}
-
-        <div class="tips">
-          <div class="tip"><b>Short Links</b>bit.ly in SMS hides dangerous destinations</div>
-          <div class="tip"><b>Prize Scams</b>"You've won" is a classic smishing opener</div>
-          <div class="tip"><b>OTP Requests</b>No real service asks you to share an OTP</div>
-          <div class="tip"><b>ALL CAPS</b>Screaming text bypasses rational thinking</div>
-        </div>
-      </div>
-
-      <!-- RIGHT panel — items #4–6 -->
-      <div class="side-panel">
-        <div class="panel-title"><span class="dot"></span> Trending SMS</div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#4</span>
-            <span class="t-body">HDFC txn ₹4,999 suspicious. Verify: hdfccard-verify.gq/secure</span>
-          </div>
-          <div class="t-sender">From: HDFCBK</div>
-          <span class="t-tag tag-bank">Bank</span>
-        </div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#5</span>
-            <span class="t-body">WFH JOB ₹600/hr. No experience needed. Register: wa.me/91XXXXXXXXXX</span>
-          </div>
-          <div class="t-sender">From: Unknown</div>
-          <span class="t-tag tag-job">Job Scam</span>
-        </div>
-
-        <div class="t-item">
-          <div class="t-row">
-            <span class="t-num">#6</span>
-            <span class="t-body">Your Aadhaar is linked to illegal activity. Call 9XXXXXXXX immediately.</span>
-          </div>
-          <div class="t-sender">From: +91-XXXXXXXXXX</div>
-          <span class="t-tag tag-kyc">Govt Spoof</span>
-        </div>
-
-        <div class="panel-foot">Updated 29 Apr 2026</div>
-      </div>
-
-    </div><!-- /.three-col -->
-  </main>
-
+<div class="grid-bg"></div>
+<nav>
+  <span class="brand">PHISHIQ</span>
+  <a href="{{ url_for('home') }}">Home</a>
+  <a href="{{ url_for('form') }}">URL</a>
+  <a href="{{ url_for('email_check') }}">Email</a>
+  <a href="{{ url_for('sms_check') }}" class="active">SMS</a>
+  <a href="{{ url_for('recovery') }}">Recovery</a>
+</nav>
+<main>
+  <h1>SMS Phishing Check</h1>
+  <p class="sub">Paste SMS text or upload a screenshot to scan</p>
+  <div class="card">
+    <form method="POST" action="{{ url_for('sms_check') }}" enctype="multipart/form-data">
+      <textarea name="sms" placeholder="Paste SMS content here...">{{ sms or '' }}</textarea>
+      <label class="file-label" for="screenshot">📎 Upload SMS screenshot (optional)</label>
+      <input type="file" id="screenshot" name="screenshot" accept="image/*">
+      <button type="submit">Analyse SMS</button>
+    </form>
+    {% if result %}
+    <div class="result-box">
+      <div class="result-text {% if 'High' in result %}high{% elif 'Medium' in result %}med{% else %}low{% endif %}">{{ result }}</div>
+      <div class="risk-pct">Risk Score: {{ risk_percentage }}%</div>
+    </div>
+    {% endif %}
+    <div class="tips">
+      <div class="tip"><b>Short Links</b>bit.ly or tinyurl in SMS hide dangerous destinations from plain sight</div>
+      <div class="tip"><b>Prize Scams</b>"You've won a free gift" is a classic smishing opener — ignore and delete</div>
+      <div class="tip"><b>OTP Requests</b>No real service asks you to share an OTP you just received via SMS</div>
+      <div class="tip"><b>ALL CAPS Alarm</b>SCREAMING text is a pressure tactic used to bypass rational thinking</div>
+    </div>
+  </div>
+</main>
 </body>
 </html>

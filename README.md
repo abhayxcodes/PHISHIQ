@@ -1,664 +1,313 @@
-\# 🛡️ PhishIQ — Phishing Detection System
+# 🛡️ PhishIQ — Phishing Detection System
 
+> An ML-powered cybersecurity web application for detecting potentially malicious URLs, emails, and SMS messages.
 
+PhishIQ is a machine-learning-based phishing detection system built with **Python and Flask**. It analyzes suspicious URLs, email content, and SMS messages using trained machine-learning models and presents the results through a simple web interface.
 
-\*\*PhishIQ\*\* is a web-based phishing detection and cybersecurity analysis platform designed to identify potentially malicious URLs, emails, and SMS messages using machine learning and security-focused analysis.
+The project was developed as a practical cybersecurity project to explore the application of **machine learning, web development, threat detection, and secure software deployment**.
 
+---
 
+## 🚀 Features
 
-The project combines machine learning models with a simple, user-friendly web interface to help users analyze suspicious digital content and understand the potential risks associated with it.
+### 🔗 URL Phishing Detection
 
+Analyze a URL and classify it using a trained machine-learning model.
 
+The system uses URL-related features to identify patterns commonly associated with phishing URLs.
 
-\---
+### 📧 Email Phishing Detection
 
+Analyze email content and identify characteristics that may indicate a phishing attempt.
 
+### 📱 SMS Phishing Detection
 
-\## 🚀 Features
+Analyze suspicious SMS messages and classify them using a dedicated machine-learning model.
 
+### 📊 Risk Analysis
 
+PhishIQ presents detection results in a user-friendly format so that users can better understand the potential risk associated with submitted content.
 
-\### 🔗 URL Phishing Detection
+### 🔐 Recovery Assistance
 
+The application provides basic guidance for users who believe they may have interacted with a suspicious URL, email, or SMS.
 
+### 🧪 Automated Testing
 
-Analyze suspicious URLs and determine whether they are potentially:
+The project includes tests for important application functionality using Pytest.
 
+---
 
+# 🧠 How It Works
 
-\* Legitimate
-
-\* Suspicious
-
-\* Malicious / Phishing
-
-
-
-PhishIQ uses machine-learning-based URL analysis to evaluate characteristics of submitted URLs.
-
-
-
-\### 📧 Email Analysis
-
-
-
-Analyze email content for suspicious characteristics such as:
-
-
-
-\* Suspicious wording
-
-\* Phishing indicators
-
-\* Malicious intent
-
-\* Potential social-engineering patterns
-
-
-
-\### 📱 SMS / Message Detection
-
-
-
-Analyze suspicious messages and identify potential phishing or scam indicators.
-
-
-
-\### 🤖 Machine Learning
-
-
-
-PhishIQ uses trained machine-learning models for automated classification and risk analysis.
-
-
-
-The system is designed to support multiple detection components, including URL and message analysis.
-
-
-
-\### 📊 Security-Focused Interface
-
-
-
-The application provides a centralized interface for performing phishing checks and viewing analysis results.
-
-
-
-\### 🧪 Testing
-
-
-
-The project includes automated tests to help verify application functionality and maintain reliability during development.
-
-
-
-\---
-
-
-
-\## 🏗️ Project Structure
-
-
+PhishIQ follows a simple detection pipeline:
 
 ```text
+                    User Input
+                        │
+          ┌─────────────┼─────────────┐
+          │             │             │
+         URL          Email          SMS
+          │             │             │
+          ▼             ▼             ▼
+   Feature Extraction / Text Processing
+          │             │             │
+          └─────────────┼─────────────┘
+                        ▼
+              Machine Learning Model
+                        │
+                        ▼
+                 Risk Classification
+                        │
+                        ▼
+                User-Friendly Result
+The application receives the user's input, processes the relevant features, sends them to the appropriate trained model, and displays the resulting classification through the Flask web interface.
 
+🏗️ Project Structure
 PHISHIQ/
-
 │
-
-├── app.py                  # Main Flask application
-
-├── requirements.txt        # Python dependencies
-
-├── README.md               # Project documentation
-
+├── app.py
+├── requirements.txt
+├── Dockerfile
+├── README.md
+├── .gitignore
+├── .gitattributes
 │
-
-├── datasets/               # Datasets used for model development
-
+├── datasets/
+│   ├── CEAS_08.csv
+│   ├── Dataset_10191.csv
+│   └── PhiUSIIL_Phishing_URL_Dataset.csv
 │
-
-├── ml\_models/              # Machine learning components
-
+├── models/
+│   ├── url_model.pkl
+│   ├── email_model.pkl
+│   ├── sms_model.pkl
+│   ├── sms_threshold.json
+│   ├── url_features.npy
+│   └── url_features_meta.json
 │
-
-├── models/                 # Trained ML models
-
+├── ml_models/
+│   └── ...
 │
-
-├── templates/              # Flask HTML templates
-
+├── templates/
+│   ├── home.html
+│   ├── url.html
+│   ├── email.html
+│   ├── sms.html
+│   ├── dashboard.html
+│   └── recovery.html
 │
-
-├── utils/                  # Utility and helper modules
-
-│
-
-└── tests/                  # Automated tests
-
-```
-
-
-
-\---
-
-
-
-\## ⚙️ Technology Stack
-
-
-
-\### Backend
-
-
-
-\* Python
-
-\* Flask
-
-
-
-\### Machine Learning
-
-
-
-\* Scikit-learn
-
-\* Pandas
-
-\* NumPy
-
-\* Joblib
-
-
-
-\### Frontend
-
-
-
-\* HTML
-
-\* CSS
-
-\* JavaScript
-
-\* Jinja2
-
-
-
-\### Development \& Testing
-
-
-
-\* Pytest
-
-\* Git
-
-\* GitHub
-
-\* Git LFS
-
-
-
-\### Deployment
-
-
-
-\* Render
-
-\* Gunicorn
-
-
-
-\---
-
-
-
-\## 🔍 How PhishIQ Works
-
-
-
-A simplified workflow looks like this:
-
-
-
-```text
-
-&#x20;                   ┌─────────────────┐
-
-&#x20;                   │      User       │
-
-&#x20;                   └────────┬────────┘
-
-&#x20;                            │
-
-&#x20;                            ▼
-
-&#x20;                 ┌─────────────────────┐
-
-&#x20;                 │   PhishIQ Web App   │
-
-&#x20;                 └──────────┬──────────┘
-
-&#x20;                            │
-
-&#x20;             ┌──────────────┼──────────────┐
-
-&#x20;             ▼              ▼              ▼
-
-&#x20;         URL Check      Email Check     SMS Check
-
-&#x20;             │              │              │
-
-&#x20;             ▼              ▼              ▼
-
-&#x20;      Feature Analysis  Content Analysis  Message Analysis
-
-&#x20;             │              │              │
-
-&#x20;             └──────────────┼──────────────┘
-
-&#x20;                            ▼
-
-&#x20;                   ┌─────────────────┐
-
-&#x20;                   │  ML Prediction  │
-
-&#x20;                   └────────┬────────┘
-
-&#x20;                            │
-
-&#x20;                            ▼
-
-&#x20;                   ┌─────────────────┐
-
-&#x20;                   │ Risk / Result   │
-
-&#x20;                   └─────────────────┘
-
-```
-
-
-
-\---
-
-
-
-\## 💻 Installation
-
-
-
-\### 1. Clone the repository
-
-
-
-```bash
-
+└── tests/
+    └── ...
+🛠️ Technology Stack
+Backend
+Python
+Flask
+Gunicorn
+Machine Learning
+Scikit-learn
+NumPy
+Pandas
+Joblib
+Frontend
+HTML
+CSS
+JavaScript
+Jinja2
+Testing
+Pytest
+Deployment & Development
+Git
+GitHub
+Git LFS
+Docker
+Render
+🤖 Machine Learning Models
+
+PhishIQ uses dedicated trained models for different types of input.
+
+Detection	Model
+URL	url_model.pkl
+Email	email_model.pkl
+SMS	sms_model.pkl
+
+Additional supporting files are used for feature processing and prediction configuration.
+
+models/
+├── url_model.pkl
+├── url_features.npy
+├── url_features_meta.json
+├── email_model.pkl
+├── sms_model.pkl
+└── sms_threshold.json
+
+Large machine-learning models and datasets are managed using Git LFS.
+
+📂 Datasets
+
+The project contains datasets used for machine-learning development.
+
+Current datasets include:
+
+CEAS 08
+Dataset 10191
+PhiUSIIL Phishing URL Dataset
+
+The use and redistribution of third-party datasets should follow their respective licenses and terms.
+
+💻 Local Installation
+1. Clone the Repository
 git clone https://github.com/abhayxcodes/PHISHIQ-Phishing-Detection-System.git
 
-```
-
-
-
-Move into the project:
-
-
-
-```bash
+Navigate to the project:
 
 cd PHISHIQ-Phishing-Detection-System
-
-```
-
-
-
-\### 2. Create a virtual environment
-
-
-
-Windows:
-
-
-
-```bash
-
+2. Create a Virtual Environment
+Windows
 python -m venv venv
 
-```
+Activate it:
 
+venv\Scripts\activate
+Linux / macOS
+python3 -m venv venv
 
+Activate it:
 
-Activate it using Git Bash:
-
-
-
-```bash
-
-source venv/Scripts/activate
-
-```
-
-
-
-Or using Command Prompt:
-
-
-
-```cmd
-
-venv\\Scripts\\activate
-
-```
-
-
-
-\### 3. Install dependencies
-
-
-
-```bash
-
+source venv/bin/activate
+3. Install Dependencies
 pip install -r requirements.txt
-
-```
-
-
-
-\---
-
-
-
-\## ▶️ Running Locally
-
-
-
-Start the Flask application:
-
-
-
-```bash
-
+4. Run the Application
 python app.py
 
-```
-
-
-
-Then open:
-
-
-
-```text
+The application will normally be available at:
 
 http://127.0.0.1:5000
+🧪 Testing
 
-```
-
-
-
-\---
-
-
-
-\## 🤖 Machine Learning Models
-
-
-
-PhishIQ uses trained machine-learning models for automated phishing analysis.
-
-
-
-Large model files are managed using \*\*Git Large File Storage (Git LFS)\*\* rather than standard Git storage.
-
-
-
-Install Git LFS:
-
-
-
-```bash
-
-git lfs install
-
-```
-
-
-
-Verify tracked model files:
-
-
-
-```bash
-
-git lfs ls-files
-
-```
-
-
-
-> Model files may be large and therefore require Git LFS for repository storage and distribution.
-
-
-
-\---
-
-
-
-\## 🧪 Running Tests
-
-
-
-Run the project's test suite with:
-
-
-
-```bash
+Run the test suite:
 
 pytest
 
-```
-
-
-
-For more detailed output:
-
-
-
-```bash
+For detailed output:
 
 pytest -v
+🐳 Docker
 
-```
+PhishIQ includes a Docker configuration for containerized deployment.
 
+Build the Image
+docker build -t phishiq .
+Run the Container
+docker run -p 5000:5000 phishiq
 
+Open:
 
-\---
+http://localhost:5000
 
+The application is served using Gunicorn inside the container.
 
+🌐 Render Deployment
 
-\## 🔐 Security Considerations
+PhishIQ is designed to be deployable as a Docker-based web service on Render.
 
+Deployment Configuration
+Repository:
+PHISHIQ-Phishing-Detection-System
 
+Branch:
+main
 
-PhishIQ is intended as a cybersecurity analysis and educational project.
+Runtime:
+Docker
 
+The included Dockerfile handles the application environment and starts the Flask application using Gunicorn.
 
+Production startup command:
 
-Do not submit sensitive personal information, private credentials, authentication tokens, or confidential emails/messages for testing.
+gunicorn --bind 0.0.0.0:5000 app:app
+Environment Variables
 
+Production secrets should not be committed to GitHub.
 
+Configure them through the deployment platform.
 
-Environment variables and secrets should be stored locally or through the deployment platform's environment-variable system.
+Example:
 
+SECRET_KEY=<your-secret-key>
+FLASK_DEBUG=false
+📦 Git LFS
 
+PhishIQ contains large machine-learning models and datasets.
 
-For example:
+Git LFS is used to manage these files.
 
+Install Git LFS:
 
+git lfs install
 
-```text
+Check LFS-tracked files:
 
-.env
+git lfs ls-files
 
-```
+The repository uses Git LFS for large files such as:
 
+*.pkl
+*.csv
+*.npy
+*.json
+🔒 Security & Privacy
 
+PhishIQ is a defensive cybersecurity and educational project.
 
-should \*\*not\*\* be committed to GitHub.
+Machine-learning predictions are not guaranteed to be correct and may result in false positives or false negatives.
 
+Do not submit real passwords, OTPs, banking credentials, API keys, or other sensitive information while testing the application.
 
+🎯 Project Objectives
 
-\---
+The project was developed to demonstrate practical implementation of:
 
+Machine learning in cybersecurity
+Phishing detection
+Flask web application development
+Machine-learning model integration
+Data processing
+Security-focused UI development
+Automated testing
+Docker containerization
+Cloud deployment
+🔮 Future Improvements
 
+Potential future improvements include:
 
-\## 🌐 Deployment
+Real-time threat intelligence integration
+Domain reputation analysis
+WHOIS and DNS analysis
+URL shortening detection
+Improved ML explainability
+Additional phishing datasets
+Model performance monitoring
+Security event logging
+API endpoints
+User authentication and scan history
+👨‍💻 Developer
+Abhay Soni
 
-
-
-PhishIQ can be deployed as a Flask web application using a production WSGI server such as Gunicorn.
-
-
-
-Example production start command:
-
-
-
-```bash
-
-gunicorn app:app
-
-```
-
-
-
-Example build command:
-
-
-
-```bash
-
-pip install -r requirements.txt
-
-```
-
-
-
-Environment variables should be configured through the deployment platform rather than committed to the repository.
-
-
-
-\---
-
-
-
-\## 📈 Future Improvements
-
-
-
-Possible future improvements include:
-
-
-
-\* Real-time threat intelligence integration
-
-\* URL reputation APIs
-
-\* Improved phishing classification models
-
-\* Explainable AI for prediction results
-
-\* Advanced email header analysis
-
-\* Screenshot-based phishing detection
-
-\* Security event logging
-
-\* User authentication improvements
-
-\* Dashboard analytics
-
-\* REST API support
-
-\* Continuous model improvement
-
-\* Cloud database integration
-
-
-
-\---
-
-
-
-\## 🎯 Project Goals
-
-
-
-PhishIQ aims to make phishing analysis more accessible by combining:
-
-
-
-\*\*Cybersecurity + Machine Learning + Web Development\*\*
-
-
-
-The long-term goal is to build a practical security-analysis platform capable of helping users identify suspicious digital content before interacting with it.
-
-
-
-\---
-
-
-
-\## 👨‍💻 Developer
-
-
-
-\*\*Abhay Soni\*\*
-
-
-
-B.Tech Computer Science \& Engineering
-
+B.Tech CSE Student
 Cybersecurity / Defensive Security Enthusiast
 
-
-
 GitHub:
-
 https://github.com/abhayxcodes
 
+⚠️ Disclaimer
 
+PhishIQ is a student and educational cybersecurity project developed for learning, research, and defensive security purposes.
 
-\---
+The system's prediction should not be considered definitive proof that a URL, email, or SMS is safe or malicious.
 
+Always verify suspicious communications through trusted sources and follow appropriate cybersecurity practices.
 
+⭐ Project
 
-\## 📄 License
-
-
-
-This project is intended for educational and cybersecurity research purposes.
-
-
-
-If this repository contains or incorporates third-party code, datasets, models, or other resources, their respective licenses and attribution requirements apply.
-
-
-
-\---
-
-
-
-\## ⚠️ Disclaimer
-
-
-
-PhishIQ provides automated analysis and should not be considered a definitive security verdict.
-
-
-
-Machine-learning predictions can produce false positives and false negatives. Always verify suspicious content using trusted security practices before taking action.
-
-
-
+If you find the project useful, feel free to explore the implementation and suggest improvements.

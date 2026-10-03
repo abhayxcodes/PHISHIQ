@@ -1,313 +1,280 @@
-# 🛡️ PhishIQ — Phishing Detection System
+# 🛡️ PhishIQ — Phishing Management System
 
-> An ML-powered cybersecurity web application for detecting potentially malicious URLs, emails, and SMS messages.
+> Detect phishing in URLs, emails, and SMS. Understand *why* it was flagged. Know what to do if you've already been hit.
 
-PhishIQ is a machine-learning-based phishing detection system built with **Python and Flask**. It analyzes suspicious URLs, email content, and SMS messages using trained machine-learning models and presents the results through a simple web interface.
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![Flask](https://img.shields.io/badge/Flask-Web%20App-black)
+![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-orange)
+![Docker](https://img.shields.io/badge/Docker-supported-2496ED)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-The project was developed as a practical cybersecurity project to explore the application of **machine learning, web development, threat detection, and secure software deployment**.
-
----
-
-## 🚀 Features
-
-### 🔗 URL Phishing Detection
-
-Analyze a URL and classify it using a trained machine-learning model.
-
-The system uses URL-related features to identify patterns commonly associated with phishing URLs.
-
-### 📧 Email Phishing Detection
-
-Analyze email content and identify characteristics that may indicate a phishing attempt.
-
-### 📱 SMS Phishing Detection
-
-Analyze suspicious SMS messages and classify them using a dedicated machine-learning model.
-
-### 📊 Risk Analysis
-
-PhishIQ presents detection results in a user-friendly format so that users can better understand the potential risk associated with submitted content.
-
-### 🔐 Recovery Assistance
-
-The application provides basic guidance for users who believe they may have interacted with a suspicious URL, email, or SMS.
-
-### 🧪 Automated Testing
-
-The project includes tests for important application functionality using Pytest.
+PhishIQ is a Flask web app that combines **rule-based detection** with **machine learning models** to catch phishing across three channels: **URLs, emails, and SMS**. If something goes wrong, a built-in **Recovery Center** walks you through the next steps.
 
 ---
 
-# 🧠 How It Works
+## Table of Contents
 
-PhishIQ follows a simple detection pipeline:
+- [Why PhishIQ?](#why-phishiq)
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Run with Docker](#run-with-docker)
+- [Training the Models](#training-the-models)
+- [Usage](#usage)
+- [Risk Scoring](#risk-scoring)
+- [Known Limitations](#known-limitations)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Author](#author)
+- [License](#license)
 
-```text
-                    User Input
-                        │
-          ┌─────────────┼─────────────┐
-          │             │             │
-         URL          Email          SMS
-          │             │             │
-          ▼             ▼             ▼
-   Feature Extraction / Text Processing
-          │             │             │
-          └─────────────┼─────────────┘
-                        ▼
-              Machine Learning Model
-                        │
-                        ▼
-                 Risk Classification
-                        │
-                        ▼
-                User-Friendly Result
-The application receives the user's input, processes the relevant features, sends them to the appropriate trained model, and displays the resulting classification through the Flask web interface.
+---
 
-🏗️ Project Structure
+## Why PhishIQ?
+
+Most phishing checkers give you a yes/no and nothing else. PhishIQ is built around three ideas:
+
+1. **Explain, don't just flag.** Every scan returns human-readable reasons (e.g. "@ symbol detected", "short link found").
+2. **Two opinions are better than one.** A transparent rule engine and an ML model score every input independently.
+3. **Detection isn't the end.** If you clicked the link or shared an OTP, you need a plan, not just a warning.
+
+---
+
+## Features
+
+| Module | What it does |
+|---|---|
+| 🔗 **URL Scanner** | Analyzes a link using 51 engineered features plus heuristic rules (IP addresses, `@` tricks, hyphenated domains, subdomain depth, suspicious keywords, and more). |
+| 📧 **Email Scanner** | Scans email text for suspicious, urgent, and sensitive-info keywords, bad TLDs (`.xyz`, `.top`, `.tk`, `.gq`), link stacking, and grammar errors. |
+| 💬 **SMS Scanner** | Detects smishing using TF-IDF + Random Forest, plus checks for short links, urgency language, fake-login patterns, and digit-heavy or all-caps messages. |
+| 🖼️ **Screenshot OCR** | Upload a screenshot of an email or SMS. Text is extracted with Tesseract and scanned automatically. |
+| 📊 **Risk Dashboard** | Shows a risk percentage, a Low / Medium / High verdict, the ML probability, and every reason behind the score. |
+| 🚑 **Recovery Center** | Step-by-step guidance for compromised passwords, bank details, leaked OTPs, and infected devices. Includes India's Cyber Crime Helpline (**1930**). |
+
+---
+
+## How It Works
+
+```
+              ┌──────────────┐
+   Input      │ URL / Email  │   (email & SMS also accept screenshots → Tesseract OCR)
+              │ / SMS        │
+              └──────┬───────┘
+                     │
+            ┌────────┴────────┐
+            ▼                 ▼
+     ┌─────────────┐   ┌───────────────┐
+     │ Rule Engine │   │ ML Model      │
+     │ keyword &   │   │ Random Forest │
+     │ pattern     │   │ + features /  │
+     │ scoring     │   │ TF-IDF        │
+     └──────┬──────┘   └───────┬───────┘
+            └────────┬─────────┘
+                     ▼
+             ┌───────────────┐
+             │  Dashboard    │  risk %, verdict, ML probability, reasons
+             └───────┬───────┘
+                     ▼
+             ┌───────────────┐
+             │ Recovery      │  what to do if you've been hit
+             └───────────────┘
+```
+
+**Rule engine:** Each red flag adds 10 points (30 for heavy grammar errors in emails). The total is normalized to a 0–100% risk score.
+
+**ML layer:** Each channel has its own Random Forest classifier, trained on public datasets:
+
+| Channel | Dataset | Model | Input |
+|---|---|---|---|
+| URL | PhiUSIIL Phishing URL Dataset | Random Forest (600 trees, balanced) | 51 handcrafted URL features |
+| Email | CEAS-08 | Random Forest (200 trees, depth 20) | TF-IDF (50 terms) + URL feature |
+| SMS | Dataset_10191 (ham / spam / smishing) | Random Forest (200 trees, depth 25) | TF-IDF (3000 terms, 1–2 grams) |
+
+---
+
+## Tech Stack
+
+- **Backend:** Python, Flask
+- **ML:** scikit-learn (RandomForest, TF-IDF), pandas, NumPy, SciPy, joblib
+- **NLP / text:** LanguageTool (`language_tool_python`), pytesseract, Pillow
+- **URL parsing:** `tldextract`, `urllib`
+- **Frontend:** Jinja2 templates (HTML/CSS)
+- **Deployment:** Docker
+
+---
+
+## Project Structure
+
+```
 PHISHIQ/
-│
-├── app.py
-├── requirements.txt
-├── Dockerfile
-├── README.md
-├── .gitignore
-├── .gitattributes
-│
-├── datasets/
-│   ├── CEAS_08.csv
-│   ├── Dataset_10191.csv
-│   └── PhiUSIIL_Phishing_URL_Dataset.csv
-│
-├── models/
-│   ├── url_model.pkl
-│   ├── email_model.pkl
-│   ├── sms_model.pkl
-│   ├── sms_threshold.json
-│   ├── url_features.npy
-│   └── url_features_meta.json
-│
-├── ml_models/
-│   └── ...
-│
-├── templates/
-│   ├── home.html
-│   ├── url.html
-│   ├── email.html
-│   ├── sms.html
-│   ├── dashboard.html
-│   └── recovery.html
-│
-└── tests/
-    └── ...
-🛠️ Technology Stack
-Backend
-Python
-Flask
-Gunicorn
-Machine Learning
-Scikit-learn
-NumPy
-Pandas
-Joblib
-Frontend
-HTML
-CSS
-JavaScript
-Jinja2
-Testing
-Pytest
-Deployment & Development
-Git
-GitHub
-Git LFS
-Docker
-Render
-🤖 Machine Learning Models
+├── app.py                  # Flask app: routes, scoring, model loading
+├── Machine_learning/       # Feature extraction, training scripts, trained .pkl models
+├── abhay_csv/              # CSV data used by the project
+├── templates/              # Jinja2 templates (home, url, email, sms, dashboard, recovery)
+├── Dockerfile              # Container build
+├── requirements.txt        # Python dependencies
+└── README.md
+```
 
-PhishIQ uses dedicated trained models for different types of input.
+---
 
-Detection	Model
-URL	url_model.pkl
-Email	email_model.pkl
-SMS	sms_model.pkl
+## Getting Started
 
-Additional supporting files are used for feature processing and prediction configuration.
+### Prerequisites
 
-models/
-├── url_model.pkl
-├── url_features.npy
-├── url_features_meta.json
-├── email_model.pkl
-├── sms_model.pkl
-└── sms_threshold.json
+- Python 3.9+
+- Java 8+ (required by LanguageTool)
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) installed and on your `PATH`
 
-Large machine-learning models and datasets are managed using Git LFS.
+### Installation
 
-📂 Datasets
+```bash
+# 1. Clone the repo
+git clone https://github.com/abhayxcodes/PHISHIQ.git
+cd PHISHIQ
 
-The project contains datasets used for machine-learning development.
-
-Current datasets include:
-
-CEAS 08
-Dataset 10191
-PhiUSIIL Phishing URL Dataset
-
-The use and redistribution of third-party datasets should follow their respective licenses and terms.
-
-💻 Local Installation
-1. Clone the Repository
-git clone https://github.com/abhayxcodes/PHISHIQ-Phishing-Detection-System.git
-
-Navigate to the project:
-
-cd PHISHIQ-Phishing-Detection-System
-2. Create a Virtual Environment
-Windows
+# 2. Create a virtual environment
 python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
-Activate it:
-
-venv\Scripts\activate
-Linux / macOS
-python3 -m venv venv
-
-Activate it:
-
-source venv/bin/activate
-3. Install Dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
-4. Run the Application
+```
+
+### Check model paths
+
+Make sure `app.py` loads the trained models using paths that exist on your machine. Relative paths are the most portable:
+
+```python
+import os, joblib
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = joblib.load(os.path.join(BASE_DIR, "Machine_learning", "phishing_model.pkl"))
+```
+
+### Run
+
+```bash
 python app.py
+```
 
-The application will normally be available at:
+Open **http://127.0.0.1:5000** in your browser.
 
-http://127.0.0.1:5000
-🧪 Testing
+---
 
-Run the test suite:
+## Run with Docker
 
-pytest
-
-For detailed output:
-
-pytest -v
-🐳 Docker
-
-PhishIQ includes a Docker configuration for containerized deployment.
-
-Build the Image
+```bash
 docker build -t phishiq .
-Run the Container
 docker run -p 5000:5000 phishiq
+```
 
-Open:
+Then open **http://localhost:5000**. If your `Dockerfile` exposes a different port, adjust the `-p` mapping to match.
 
-http://localhost:5000
+---
 
-The application is served using Gunicorn inside the container.
+## Training the Models
 
-🌐 Render Deployment
+Download the datasets, update the CSV paths at the top of each training script, then run:
 
-PhishIQ is designed to be deployable as a Docker-based web service on Render.
+```bash
+python Machine_learning/url_ml_model.py     # URL model
+python Machine_learning/email_ml_model.py   # Email model + TF-IDF vectorizer
+python Machine_learning/sms_ml_model.py     # SMS model + TF-IDF vectorizer
+```
 
-Deployment Configuration
-Repository:
-PHISHIQ-Phishing-Detection-System
+> ⚠️ Make sure each script saves to a **different filename** so the URL and SMS models don't overwrite each other.
 
-Branch:
-main
+**Datasets**
 
-Runtime:
-Docker
+- [PhiUSIIL Phishing URL Dataset](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset) (URLs)
+- CEAS-08 (emails)
+- SMS phishing dataset with `ham`, `spam`, and `smishing` labels (SMS)
 
-The included Dockerfile handles the application environment and starts the Flask application using Gunicorn.
+---
 
-Production startup command:
+## Usage
 
-gunicorn --bind 0.0.0.0:5000 app:app
-Environment Variables
+| Route | Method | Purpose |
+|---|---|---|
+| `/` | GET | Landing page |
+| `/url` | GET, POST | Scan a URL |
+| `/email` | GET, POST | Scan email text or a screenshot |
+| `/sms` | GET, POST | Scan SMS text or a screenshot |
+| `/recovery` | GET, POST | Get recovery steps (`password`, `bank`, `otp`, `device`) |
 
-Production secrets should not be committed to GitHub.
+**Example:** Open `/sms`, paste a suspicious message such as *"Your account is suspended. Verify now: bit.ly/xyz"*, and hit **Scan**. The dashboard flags the keywords, the short link, and the urgency wording, then shows the ML probability next to the rule-based risk score.
 
-Configure them through the deployment platform.
+---
 
-Example:
+## Risk Scoring
 
-SECRET_KEY=<your-secret-key>
-FLASK_DEBUG=false
-📦 Git LFS
+| Risk % | Verdict |
+|---|---|
+| Below 30% | ✅ Low Risk |
+| 30% – 59% | ⚠️ Medium Risk |
+| 60% and above | 🚨 High Risk |
 
-PhishIQ contains large machine-learning models and datasets.
+The risk percentage comes from the rule engine. The ML probability is shown alongside it as a second opinion.
 
-Git LFS is used to manage these files.
+---
 
-Install Git LFS:
+## Known Limitations
 
-git lfs install
+- **Not a replacement for enterprise security tools.** It's a decision-support tool for individuals and learning projects.
+- **Keyword rules are simple.** Substring matching can produce false positives.
+- **Trusted-domain allowlist is small.** Only a handful of major domains bypass URL scoring.
+- **English-centric.** Grammar checking and TF-IDF vocabularies are English only.
+- **Model files must match the feature pipeline.** If you change the feature extraction code, retrain the models.
+- **Accuracy depends on the training data.** Add your benchmark results below.
 
-Check LFS-tracked files:
+| Model | Accuracy | Precision | Recall |
+|---|---|---|---|
+| URL | _TBD_ | _TBD_ | _TBD_ |
+| Email | _TBD_ | _TBD_ | _TBD_ |
+| SMS | _TBD_ | _TBD_ | _TBD_ |
 
-git lfs ls-files
+---
 
-The repository uses Git LFS for large files such as:
+## Roadmap
 
-*.pkl
-*.csv
-*.npy
-*.json
-🔒 Security & Privacy
+- [x] `requirements.txt`
+- [x] Docker support
+- [ ] Combine rule score and ML probability into one final verdict
+- [ ] Multilingual support (Hindi and regional languages)
+- [ ] Live URL reputation checks (Google Safe Browsing, VirusTotal)
+- [ ] Scan history and reporting dashboard
+- [ ] Browser extension
+- [ ] Cloud deployment
+- [ ] Unit tests for feature extraction
 
-PhishIQ is a defensive cybersecurity and educational project.
+---
 
-Machine-learning predictions are not guaranteed to be correct and may result in false positives or false negatives.
+## Contributing
 
-Do not submit real passwords, OTPs, banking credentials, API keys, or other sensitive information while testing the application.
+Contributions are welcome.
 
-🎯 Project Objectives
+1. Fork the repository
+2. Create a branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add your feature"`
+4. Push and open a Pull Request
 
-The project was developed to demonstrate practical implementation of:
+---
 
-Machine learning in cybersecurity
-Phishing detection
-Flask web application development
-Machine-learning model integration
-Data processing
-Security-focused UI development
-Automated testing
-Docker containerization
-Cloud deployment
-🔮 Future Improvements
+## Author
 
-Potential future improvements include:
+**Abhay** — [@abhayxcodes](https://github.com/abhayxcodes)
 
-Real-time threat intelligence integration
-Domain reputation analysis
-WHOIS and DNS analysis
-URL shortening detection
-Improved ML explainability
-Additional phishing datasets
-Model performance monitoring
-Security event logging
-API endpoints
-User authentication and scan history
-👨‍💻 Developer
-Abhay Soni
+Built as a phishing awareness and management project.
 
-B.Tech CSE Student
-Cybersecurity / Defensive Security Enthusiast
+---
 
-GitHub:
-https://github.com/abhayxcodes
+## License
 
-⚠️ Disclaimer
+Released under the MIT License. Add a `LICENSE` file to the repo root to make this official.
 
-PhishIQ is a student and educational cybersecurity project developed for learning, research, and defensive security purposes.
+---
 
-The system's prediction should not be considered definitive proof that a URL, email, or SMS is safe or malicious.
-
-Always verify suspicious communications through trusted sources and follow appropriate cybersecurity practices.
-
-⭐ Project
-
-If you find the project useful, feel free to explore the implementation and suggest improvements.
+**Stay sharp. Think before you click. 🛡️**
